@@ -1,0 +1,77 @@
+.popup{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0,0.2);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+
+}
+
+.popup-inner{
+    display: flex;
+    position:relative;
+    padding: 32px;
+    width: 100%;
+    max-width: 640px;
+    height: auto;
+    background-color: aliceblue;
+}
+
+.popup-inner .close-btn{
+    position:absolute;
+    top:16px;
+    right:16px;
+}
+
+.clothes{
+    background-color: rgb(179, 179, 179);
+  width: 300px;
+  padding: 50px;
+  margin: 20px;
+}
+/* popUP.css */
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .popup-inner {
+    display: flex;
+    position: relative;
+    padding: 32px;
+    width: 100%;
+    max-width: 640px;
+    height: auto;
+    background-color: aliceblue;
+  }
+  
+  .popup-inner .close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+  }
+  
+  .clothes {
+    background-color: rgb(179, 179, 179);
+    width: 300px;
+    padding: 50px;
+    margin: 20px;
+  }
+  
+  .greyGridTable {
+    /* your table styles here */
+    margin-top: 20px; /* add margin-top to move the table down */
+  }

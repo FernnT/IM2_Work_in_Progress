@@ -95,3 +95,25 @@ app.get("/services", (req, res) => {
     });
 });
 
+
+app.get("/garments", (req, res) => {
+    db.query("SELECT * FROM garments", (err, result) => {
+        if (err) {
+            res.send({ err: err });
+        } else {
+            if (result.length > 0) {
+                res.send(result);
+            } else {
+                res.send({ message: "No garments found" });
+            }
+        }
+    });
+});
+
+app.post("/addOrder",(req,res)=>{
+
+
+})
+
+
+

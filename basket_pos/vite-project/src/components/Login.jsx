@@ -3,6 +3,7 @@ import Axios from 'axios'
 import '../App.css'
 import { useNavigate } from "react-router-dom";
 
+
 const Login = () => {
     const [email,setEmail] = useState('')
     const [password,setPassword] = useState('')
@@ -25,8 +26,7 @@ const Login = () => {
           //setLoginStatus(response.data[0].employee_name);
            navigate("/pos");
         }
-  
-  
+
       });
     };
   
