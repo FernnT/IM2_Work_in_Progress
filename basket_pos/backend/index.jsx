@@ -110,10 +110,85 @@ app.get("/garments", (req, res) => {
     });
 });
 
+app.get("/customers", (req, res) => {
+    db.query("SELECT * FROM customers", (err, result) => {
+        if (err) {
+            res.send({ err: err });
+        } else {
+            if (result.length > 0) {
+                res.send(result);
+            } else {
+                res.send({ message: "No customers found" });
+            }
+        }
+    });
+});
+
 app.post("/addOrder",(req,res)=>{
+    const newOrder = req.body.newOrder;
+    const customer = req.body.customer;
+    const employee = req.body.employee;
+    const total = req.body.total;
+    const order_pickUP= req.body.order_pickUP;
+    const order_paidAmount = req.body.order_paidAmount;
 
+    console.log(customer);
+    
+    // db.beginTransaction(err =>{
+    //     if(err){
+    //         console.log(err);
+    //         return res.send({err:err});
+           
+    //     }   //add payment method later and remarks?
+    // const insertOrderQuery= "INSERT INTO `orders`(`customer_ID`, `employee_ID`, `order_date`, `order_pickup`, `order_total`, `order_paidAmount`) VALUES (?, ?, ?, ?, ?, ?)";
 
-})
+    // db.query(insertOrderQuery,[customer.customer_ID,employee.employee_ID,Date(),order_pickUP,total,order_paidAmount],(err1,result1)=>{
+    //     if(err1){
+    //         return db.rollback(()=>{
+    //             res.send({err:err1});
+    //         });
+    //     }
 
+    //     const orderID = result1.insertId;
 
+    //     const insertOrderDetailsQuery="INSERT INTO `orderdetails`(`order_ID`, `quantity`, `order_price`, `service_ID`) VALUES ?"
+    //     //format for bulk insert
+    //     const bulkOrderDetails = newOrder.map(orderDetails=>[orderID,orderDetails.qty,orderDetails.service_price,orderDetails.service_ID])
+
+    //     db.query(insertOrderDetailsQuery,[bulkOrderDetails],(err2,result2)=>{
+    //         if(err2){
+    //             // Rollback the transaction if there's an error
+    //             return db.rollback(()=>{
+    //                 res.send({err:err2});
+    //             });
+    //         }
+
+    //     const detailID = result2.insertId;
+        
+    //     const garmentsInOrder = "INSERT INTO `garmentsinorder`(`orderDetails_ID`, `garment_ID`,'qty') VALUES(?)"
+        
+    //     const bulkGarmentsOrder = newOrder.garmentsIn.map(garments=>[detailID,garments.garment_ID,garments.quantity])
+
+    //     db.query(garmentsInOrder,[bulkGarmentsOrder],(err3,result3)=>{
+    //         if(err3){
+    //             // Rollback the transaction if there's an error
+    //             return db.rollback(()=>{
+    //                 res.send({err:err3});
+    //             });
+    //         }
+
+//             db.commit(err1=>{
+//                 if (err1) {
+//                     // Rollback the transaction if there's an error
+//                     return db.rollback(() => {
+//                         res.send({ err: err4 });
+//                     });
+//                 }
+//                  res.send({ message: "Data uploaded successfully" });
+//             })
+//     //     });
+//     //     });
+//      });
+//     });
+});
 

@@ -25,84 +25,12 @@ const posPage = () => {
     const [garmentCart,setgarmentCart] = useState([]);
     const [serviceCart,setServiceCart] = useState([]);
     const [savedService,setsavedService] = useState();
-
+    const [customers,setCustomers] = useState([]);
+    const [selectedCus,setSelectedCus] = useState();
     const [total, setTotal] = useState(0);
-
-    useEffect(() => {
-      // Calculate the total when serviceCart changes
-      const newTotal = serviceCart.reduce((acc, ordered) => acc + ordered.amount, 0);
-      setTotal(newTotal);
-    }, [serviceCart]);
-
-    useEffect(() => { //check if serviceCart is updated
-      console.log("serviceCart", serviceCart);
-      
-    }, [serviceCart]);
-
-    function onServiceCLick(service) {
-      setOpen(!open);
-
-      setsavedService(service);  //to "save" what service was selected  
-    }
-
-    function addService() {
-      setOpen(!open);
-    
-      let newServiceCart = [...serviceCart];
-     
-      if (garmentCart.length !== 0) {
-        let newService = {
-          ...savedService,
-          garmentsIn: [...garmentCart], // Use the copied version of garmentCart
-          qty:0,
-          amount:0
-
-        };
-        newServiceCart.push(newService);
-        setServiceCart(newServiceCart);
-
-        setgarmentCart([]); //set it back to empty since it is back assigned to a service
-      }
-
-    }
-   
-
-
-
-
-   
-  
-  function addGarment(garment) {
-  
-    console.log(garment);
-    let newCart = [...garmentCart]; // Copy the existing cart to avoid mutating state directly
-    let found = false;
-  
-    newCart.forEach((clothing, index) => {
-      if (clothing.garment_ID === garment.garment_ID) {
-        newCart[index] = {
-          ...clothing,
-          quantity: clothing.quantity + 1
-        };
-        found = true;
-      }
-    });
-  
-    if (!found) {
-      let addingGarment = {
-        ...garment,
-        quantity: 1
-      };
-      newCart.push(addingGarment);
-    }
-  
-    setgarmentCart(newCart);
-    console.log(newCart);
-
-
-  }
-
-
+    const [pickUpDate,setPickUpDate] = useState('');
+    const [paidAmount,setPaidAmount] = useState(0);
+    const [change,setChange]= useState(0);
 
     Axios.defaults.withCredentials = true;
 
@@ -138,6 +66,96 @@ const posPage = () => {
       
     },[])
 
+    
+    useEffect(()=>{
+      Axios.get('http://localhost:3001/customers')
+      .then((response)=>{
+        if(response.err){
+          console.log(response.err)
+        }else{
+          setCustomers(response.data);
+        }
+      })
+    },[])
+
+
+
+    useEffect(() => {
+      // Calculate the total when serviceCart changes
+      const newTotal = serviceCart.reduce((acc, ordered) => acc + ordered.amount, 0);
+      setTotal(newTotal);
+
+      console.log("Service cart:",serviceCart)
+    }, [serviceCart]);
+
+    useEffect(()=>{
+      const newChange = (paidAmount-total);
+      setChange(newChange);
+
+    },[paidAmount,total])
+
+
+
+
+
+    function onServiceCLick(service) {
+      setOpen(!open);
+
+      setsavedService(service);  //to "save" what service was selected  
+    }
+
+    function addService() {
+      setOpen(!open);
+    
+      let newServiceCart = [...serviceCart];
+     
+      if (garmentCart.length !== 0) {
+        let newService = {
+          ...savedService,
+          garmentsIn: [...garmentCart], // Use the copied version of garmentCart
+          qty:0,
+          amount:0
+
+        };
+        newServiceCart.push(newService);
+        setServiceCart(newServiceCart);
+
+        setgarmentCart([]); //set it back to empty since it is back assigned to a service
+      }
+
+    }
+  
+
+  function addGarment(garment) {
+  
+    console.log(garment);
+    let newCart = [...garmentCart]; // Copy the existing cart to avoid mutating state directly
+    let found = false;
+  
+    newCart.forEach((clothing, index) => {
+      if (clothing.garment_ID === garment.garment_ID) {
+        newCart[index] = {
+          ...clothing,
+          quantity: clothing.quantity + 1
+        };
+        found = true;
+      }
+    });
+  
+    if (!found) {
+      let addingGarment = {
+        ...garment,
+        quantity: 1
+      };
+      newCart.push(addingGarment);
+    }
+  
+    setgarmentCart(newCart);
+    console.log(newCart);
+
+
+  }
+
     function handleQtyChange(index, event) {
       const newQty = event.target.value;
       const newServiceCart = [...serviceCart];
@@ -150,9 +168,21 @@ const posPage = () => {
       setServiceCart(newServiceCart);
     }
 
-    function handleConfirmOrder(){
-      Axios.post("http://localhost:3001/confirmOrder", { serviceCart })
-      .then(response)
+    function handleConfirmOrder(){ ///confirm order
+      Axios.post("http://localhost:3001/addOrder", { 
+        newOrder:serviceCart,
+        customer: selectedCus,
+        employee: user,
+        total: total,
+        order_pickUP: pickUpDate,
+        order_paidAmount: paidAmount })
+      .then((response)=>{
+        console.log(response);
+      })
+    }
+
+    function changeCustomer(e){
+      setSelectedCus(e.target.value);
     }
     
 
@@ -167,6 +197,7 @@ const posPage = () => {
       console.log('Data from child:', childData);
       setDataFromChild(childData);
     };
+    
 
 //////////////////////////////////////////////////////
     return (  
@@ -188,6 +219,28 @@ const posPage = () => {
             <PopUPgarment trigger={open} setOpen={setOpen} addGarment={addGarment} onDataFromChild={handleChildData} addService={addService} garmentCart={garmentCart} setGarmentCart={setgarmentCart}/>
               
           </div>
+          
+          <div className="selectCustomer">
+          <select value={selectedCus} onChange={changeCustomer}>
+                <option>--Customer--</option>
+              {customers && customers.map(cus=>(
+                <option value={cus.customer_name} key={cus.customer_ID}>{cus.customer_name}</option>
+
+              ))}
+
+        </select>
+
+        <h1>{selectedCus}</h1>
+        </div>
+
+        <div className="selectDate">
+          <h3>PICKUP DATE:</h3>
+          <input type="date" value={pickUpDate} onChange={e=>setPickUpDate(e.target.value)}/>
+
+          <h1>{pickUpDate}</h1>
+        </div>
+        
+
 
 
 <div id="coursology-root" ></div>
@@ -202,6 +255,7 @@ const posPage = () => {
             <th></th>
           </tr>
         </thead>
+    
         <tbody>
           {serviceCart &&
             serviceCart.map((ordered, index) => (
@@ -227,7 +281,12 @@ const posPage = () => {
         </tbody>
       </table>
       <h3>Total: {total}</h3>
+      <h3>Paid Amount: <input type="number" value={paidAmount} onChange={(e)=>setPaidAmount(e.target.value)}/></h3>
+      <h3>{paidAmount}</h3>
+      <h3>Change: {change}</h3>
+      <button>Cancel</button>
       <button onClick={handleConfirmOrder}>Confirm</button>
+      
     </div>
   );
 };

@@ -93,7 +93,7 @@ table.greyGridTable tbody td {
   font-size: 13px;
 }
 table.greyGridTable td:nth-child(even) {
-  background: #1f1f1f;
+  background: #a8a8a8;
 }
 table.greyGridTable thead {
   background: #FFFFFF;
